@@ -22,8 +22,8 @@ fn solve_1(input: &[u8]) -> String {
                 bit1 |= 1 << (v1 - 64);
                 bit2 |= 1 << (v2 - 64);
             }
-            let r = ((bit1 & bit2).trailing_zeros() + 64) as u8;
-            (if r >= 97 { r - b'a' + 1 } else { r - b'A' + 27 }) as u16
+            let r = ((bit1 & bit2 ).trailing_zeros() + 64) as u16;
+            if r >= 97 { r - (b'a' + 1) as u16 } else { r - (b'A' + 27) as u16 }
         })
         .sum::<u16>()
         .to_string()
@@ -37,8 +37,8 @@ fn solve_2(input: &[u8]) -> String {
             let bit1: u64 = b1.into_iter().fold(0, |acc, &v| acc | (1 << (v - 64)));
             let bit2: u64 = b2.into_iter().fold(0, |acc, &v| acc | (1 << (v - 64)));
             let bit3: u64 = b3.into_iter().fold(0, |acc, &v| acc | (1 << (v - 64)));
-            let r = ((bit1 & bit2 & bit3).trailing_zeros() + 64) as u8;
-            (if r >= 97 { r - b'a' + 1 } else { r - b'A' + 27 }) as u16
+            let r = ((bit1 & bit2 & bit3).trailing_zeros() + 64) as u16;
+            if r >= 97 { r - (b'a' + 1) as u16 } else { r - (b'A' + 27) as u16 }
         })
         .sum::<u16>()
         .to_string()
