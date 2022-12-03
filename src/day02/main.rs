@@ -15,7 +15,7 @@ pub fn solve_1(input: &[u8]) -> String {
     input.split(|&v| v == b'\n')
         .filter(|v| !v.is_empty())
         .map(|l| (l[0] - b'A', l[2] - b'X'))
-        .map(|(a, b)| ((4 + b - a) % 3 * 3 + (b + 1)) as u16)
+        .map(|(a, b)| ((4 + b - a) % 3 * 3 + b + 1) as u16)
         .sum::<u16>()
         .to_string()
 }
@@ -24,14 +24,13 @@ pub fn solve_2(input: &[u8]) -> String {
     input.split(|&v| v == b'\n')
         .filter(|v| !v.is_empty())
         .map(|l| (l[0] - b'A', l[2] - b'X'))
-        .map(|(a, b)| ((2 + a + b) % 3 + (b * 3) + 1) as u16)
+        .map(|(a, b)| ((2 + a + b) % 3 + b * 3 + 1) as u16)
         .sum::<u16>()
         .to_string()
 }
 
 pub fn solve_1_steroids(input: &[u8]) -> String {
-    let mut acc: u32 = 0;
-    for line in input.array_chunks::<5>() {
+    input.array_chunks::<4>().map(|line| {
         let ab = unsafe { line.get_unchecked(0) };
         let cd = unsafe { line.get_unchecked(2) };
         let a = ab >> 1;
@@ -42,14 +41,12 @@ pub fn solve_1_steroids(input: &[u8]) -> String {
             | (((!b & d) | (!a & !c & !d) | (a & b & !d)) & 0b1) << 2
             | (((a & b) | (!a & c)) & 0b1) << 1
             | (((!a & c) | !b | (a & !c & !d)) & 0b1);
-        acc += r as u32;
-    }
-    acc.to_string()
+        r as u32
+    }).sum::<u32>().to_string()
 }
 
 pub fn solve_2_steroids(input: &[u8]) -> String {
-    let mut acc: u32 = 0;
-    for line in input.array_chunks::<5>() {
+    input.array_chunks::<4>().map(|line| {
         let ab = unsafe { line.get_unchecked(0) };
         let cd = unsafe { line.get_unchecked(2) };
         let a = ab >> 1;
@@ -60,9 +57,8 @@ pub fn solve_2_steroids(input: &[u8]) -> String {
             | ((d | (a & b & c)) & 0b1) << 2
             | (((a & b) | (!a & !c & !d)) & 0b1) << 1
             | (((!a & !c & !d) | !b | (a & c)) & 0b1);
-        acc += r as u32;
-    }
-    acc.to_string()
+        r as u32
+    }).sum::<u32>().to_string()
 }
 
 #[cfg(test)]
