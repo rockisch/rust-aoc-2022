@@ -5,9 +5,15 @@ edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
-[dependencies]
-criterion = "0.4"
+[profile.release]
+#codegen-units = 1
+lto = "fat"
+panic = "abort"
 
-[[bench]]
-name = "bench"
-harness = false
+[[bin]]
+name = "day01"
+path = "src/day01/main.rs"
+
+[[bin]]
+name = "day02"
+path = "src/day02/main.rs"
