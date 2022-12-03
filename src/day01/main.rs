@@ -9,9 +9,11 @@ pub const EXAMPLE: &[u8] = include_bytes!("example.txt");
 pub const DATA: &[u8] = include_bytes!("data.txt");
 
 fn main() {
-    let r1 = solve_1(DATA);
+    println!("Day 1");
+    let r1 = solve_1(EXAMPLE);
+    println!("Part 1: {r1}");
     let r2 = solve_2(DATA);
-    println!("RESULTS: {r1} {r2}");
+    println!("Part 2: {r2}");
 }
 
 fn solve_1(input: &[u8]) -> String {
@@ -47,7 +49,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test() {
+    fn test_1() {
         assert_eq!(solve_1(EXAMPLE), "24000");
         assert_eq!(solve_1(DATA), "70116");
         assert_eq!(solve_2(EXAMPLE), "45000");
@@ -55,12 +57,12 @@ mod tests {
     }
 
     #[bench]
-    fn bench_solve_1(b: &mut Bencher) {
+    fn bench_1_1(b: &mut Bencher) {
         b.iter(|| solve_1(black_box(DATA)));
     }
 
     #[bench]
-    fn bench_solve_2(b: &mut Bencher) {
+    fn bench_1_2(b: &mut Bencher) {
         b.iter(|| solve_2(black_box(DATA)));
     }
 }

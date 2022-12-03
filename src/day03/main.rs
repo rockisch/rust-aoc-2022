@@ -6,6 +6,7 @@ pub const EXAMPLE: &[u8] = include_bytes!("example.txt");
 pub const DATA: &[u8] = include_bytes!("data.txt");
 
 fn main() {
+    println!("Day 3");
     let r1 = solve_1(EXAMPLE);
     println!("Part 1: {r1}");
     let r2 = solve_2(DATA);
@@ -23,7 +24,7 @@ fn solve_1(input: &[u8]) -> String {
                 bit2 |= 1 << (v2 - 64);
             }
             let r = ((bit1 & bit2 ).trailing_zeros() + 64) as u16;
-            if r >= 97 { r - (b'a' + 1) as u16 } else { r - (b'A' + 27) as u16 }
+            if r >= 97 { r - b'a' as u16 + 1 } else { r - b'A' as u16 + 27 }
         })
         .sum::<u16>()
         .to_string()
@@ -38,7 +39,7 @@ fn solve_2(input: &[u8]) -> String {
             let bit2: u64 = b2.into_iter().fold(0, |acc, &v| acc | (1 << (v - 64)));
             let bit3: u64 = b3.into_iter().fold(0, |acc, &v| acc | (1 << (v - 64)));
             let r = ((bit1 & bit2 & bit3).trailing_zeros() + 64) as u16;
-            if r >= 97 { r - (b'a' + 1) as u16 } else { r - (b'A' + 27) as u16 }
+            if r >= 97 { r - b'a' as u16 + 1 } else { r - b'A' as u16 + 27 }
         })
         .sum::<u16>()
         .to_string()
@@ -50,7 +51,7 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test() {
+    fn test_3() {
         assert_eq!(solve_1(EXAMPLE), "157");
         assert_eq!(solve_1(DATA), "7674");
         assert_eq!(solve_2(EXAMPLE), "70");
@@ -58,12 +59,12 @@ mod tests {
     }
 
     #[bench]
-    fn bench_solve_1(b: &mut Bencher) {
+    fn bench_3_1(b: &mut Bencher) {
         b.iter(|| solve_1(black_box(DATA)));
     }
 
     #[bench]
-    fn bench_solve_2(b: &mut Bencher) {
+    fn bench_3_2(b: &mut Bencher) {
         b.iter(|| solve_2(black_box(DATA)));
     }
 }
