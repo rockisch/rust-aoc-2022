@@ -1,5 +1,6 @@
 #![feature(test)]
 #![feature(iter_advance_by)]
+#![feature(exact_size_is_empty)]
 extern crate test;
 
 pub const EXAMPLE: &[u8] = include_bytes!("example.txt");
@@ -13,22 +14,26 @@ fn main() {
     println!("Part 2: {r2}");
 }
 
-struct MyIter<'a, T: Iterator<Item = &'a u8>> {
-    iter: T
+struct ItemsIter<'a, T: ExactSizeIterator<Item = &'a u8>> {
+    iter: T,
 }
 
-impl<'a, T: Iterator<Item = &'a u8>> Iterator for MyIter<'a, T> {
+impl<'a, T: ExactSizeIterator<Item = &'a u8>> Iterator for ItemsIter<'a, T> {
     type Item = [u16; 4];
 
     fn next(&mut self) -> Option<Self::Item> {
+        if self.iter.is_empty() {
+            return None;
+        }
         let mut result: [u16; 4] = [0; 4];
         for r in result.iter_mut() {
-            let c1 = *self.iter.next()?;
-            let c2 = *self.iter.next().unwrap();
-            let double_digit = c2 >= b'0';
-            self.iter.advance_by(double_digit as usize).unwrap();
+            let c1 = unsafe { *self.iter.next().unwrap_unchecked() };
+            let c2 = unsafe { *self.iter.next().unwrap_unchecked() };
             *r = u16::from_be_bytes([c1, c2]);
-            if !double_digit {
+            let double_digit = c2 & 0b10000 != 0;
+            if double_digit {
+                unsafe { self.iter.next().unwrap_unchecked() };
+            } else {
                 *r >>= 8;
             }
         }
@@ -37,27 +42,27 @@ impl<'a, T: Iterator<Item = &'a u8>> Iterator for MyIter<'a, T> {
 }
 
 fn solve_1(input: &[u8]) -> String {
-    MyIter { iter: input.into_iter() }
-        .filter(|[x1, x2, y1, y2]| {
-            (x1 <= y1 && y2 <= x2) || (y1 <= x1 && x2 <= y2)
-        })
-        .count()
-        .to_string()
+    ItemsIter {
+        iter: input.into_iter(),
+    }
+    .filter(|[x1, x2, y1, y2]| (x1 <= y1 && y2 <= x2) || (y1 <= x1 && x2 <= y2))
+    .count()
+    .to_string()
 }
 
 fn solve_2(input: &[u8]) -> String {
-    MyIter { iter: input.into_iter() }
-        .filter(|[x1, x2, y1, y2]| {
-            x1 <= y2 && x2 >= y1
-        })
-        .count()
-        .to_string()
+    ItemsIter {
+        iter: input.into_iter(),
+    }
+    .filter(|[x1, x2, y1, y2]| x1 <= y2 && x2 >= y1)
+    .count()
+    .to_string()
 }
 
 #[cfg(test)]
 mod tests {
-    use test::{black_box, Bencher};
     use super::*;
+    use test::{black_box, Bencher};
 
     #[test]
     fn test_4() {
